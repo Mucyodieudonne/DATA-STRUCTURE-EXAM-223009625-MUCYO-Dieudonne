@@ -1,0 +1,92 @@
+Codes:
+#include <iostream>
+#include <vector>
+using namespace std;
+class Product {
+protected:
+    string name;
+    double price;
+public:
+    Product(string n, double p) : name(n), price(p) {}
+    void display() const { cout << name << " - " << price << " RWF" << endl; }
+    double getPrice() const { return price; }};
+class Electronic : public Product {
+public:
+    Electronic(string n, double p) : Product(n, p) {}};
+class SmartDevice : public Electronic {
+public:
+    SmartDevice(string n, double p) : Electronic(n, p) {}};
+class Clothing : public Product {
+public:
+    Clothing(string n, double p) : Product(n, p) {}};
+class Grocery : public Product {
+public:
+    Grocery(string n, double p) : Product(n, p) {}};
+class CartManager {
+    vector<Product> cart;
+public:
+    void addItem(const Product& p) {
+        cart.push_back(p);
+        cout << "Added: ";
+        p.display();}
+    void displayCart() {
+        double total = 0;
+        cout << "\n--- Cart Items ---" << endl;
+        for (int i = 0; i < cart.size(); i++) {
+            cart[i].display();
+            total += cart[i].getPrice();}
+        cout << "Cart Total: " << total << " RWF" << endl;
+        if (total > 1000) {
+            cout << "Discount applied: 2000 RWF" << endl;
+            cout << "Final Total: " << (total - 2000) << " RWF" << endl;
+        }}};
+int main() {
+    CartManager cm;
+    int choice;
+    string name;
+    double price;
+    do {
+        cout << "\n1. Add SmartDevice";
+        cout << "\n2. Add Clothing";
+        cout << "\n3. Add Grocery";
+        cout << "\n4. Display Cart";
+        cout << "\n0. Exit";
+        cout << "\nEnter your choice: ";
+        cin >> choice;
+        switch (choice) {
+            case 1:
+                cout << "Enter SmartDevice name: ";
+                cin.ignore();
+                getline(cin, name);
+                cout << "Enter price: ";
+                cin >> price;
+                cm.addItem(SmartDevice(name, price));
+                break;
+            case 2:
+                cout << "Enter Clothing item name: ";
+                cin.ignore();
+                getline(cin, name);
+                cout << "Enter price: ";
+                cin >> price;
+                cm.addItem(Clothing(name, price));
+                break;
+            case 3:
+                cout << "Enter Grocery item name: ";
+                cin.ignore();
+                getline(cin, name);
+                cout << "Enter price: ";
+                cin >> price;
+                cm.addItem(Grocery(name, price));
+                break;
+            case 4:
+                cm.displayCart();
+                break;
+            case 0:
+                cout << "Exiting program..." << endl;
+                break;
+            default:
+                cout << "Invalid choice. Try again." << endl;}
+    } while (choice != 0);
+    return 0;
+}
+
