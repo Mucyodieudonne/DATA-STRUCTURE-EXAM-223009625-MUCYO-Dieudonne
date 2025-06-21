@@ -1,1 +1,137 @@
+#include <iostream>    // For input and output like printing and typing
+#include <cstring>     // To use words in old style (like char arrays)
+
+using namespace std;
+
+// Task 1: We make a small box to keep info about one pay part
+struct PayComponent {
+    char desc[30];     // Name of the pay part (like "Basic", "Transport")
+    float amount;      // How much money this pay part is worth
+};
+
+// Task 2: This is a base class that tells other classes to make a pay calculator
+class PayCalculator {
+public:
+    // This is a rule: other classes must have this function to calculate pay
+    virtual float compute(const PayComponent* comps, int n) = 0;
+
+    virtual ~PayCalculator() {}  // To clean up nicely when done
+};
+
+// Task 2: This class adds up all pay parts for normal pay
+class RegularPayCalculator : public PayCalculator {
+public:
+    float compute(const PayComponent* comps, int n) override {
+        float sum = 0.0f;  // Start counting from zero
+        for (int i = 0; i < n; ++i) {
+            sum += (comps + i)->amount;  // Add each pay part amount
+        }
+        return sum;  // Give back total pay
+    }
+};
+
+// Task 2: This class adds up pay parts and gives extra 500 bonus
+class BonusPayCalculator : public PayCalculator {
+public:
+    float compute(const PayComponent* comps, int n) override {
+        float sum = 0.0f;  // Start counting from zero
+        for (int i = 0; i < n; ++i) {
+            sum += (comps + i)->amount;  // Add each pay part amount
+        }
+        return sum + 500.0f;  // Add 500 as bonus and give total
+    }
+};
+
+// Task 5: This class keeps pay parts for one worker
+class Employee {
+private:
+    PayComponent* comps;  // Pointer to pay parts list
+    int n;                // How many pay parts are there
+
+public:
+    Employee() : comps(NULL), n(0) {}  // At start, no pay parts
+
+    // Task 5: Add one new pay part to the list
+    void addComponent(const PayComponent& comp) {
+        PayComponent* newComps = new PayComponent[n + 1];  // Make new bigger list
+        for (int i = 0; i < n; ++i) {
+            newComps[i] = comps[i];  // Copy old pay parts to new list
+        }
+        newComps[n] = comp;  // Put new pay part at the end
+        delete[] comps;      // Remove old list from memory
+        comps = newComps;    // Use new list now
+        ++n;                 // One more pay part now
+    }
+
+    // Task 5: Remove one pay part by its place number
+    void removeComponent(int index) {
+        if (index < 0 || index >= n) return;  // If number is wrong, do nothing
+        PayComponent* newComps = new PayComponent[n - 1];  // Make smaller list
+        for (int i = 0, j = 0; i < n; ++i) {
+            if (i != index) {
+                newComps[j++] = comps[i];  // Copy all except the one to remove
+            }
+        }
+        delete[] comps;     // Remove old list
+        comps = newComps;   // Use new smaller list
+        --n;                // One less pay part now
+    }
+
+    // Give pointer to pay parts list
+    PayComponent* getComponents() const { return comps; }
+
+    // Give number of pay parts
+    int getCount() const { return n; }
+
+    // When done, clean up memory
+    ~Employee() {
+        delete[] comps;
+    }
+};
+
+int main() {
+    Employee emp;  // Make one worker to keep pay parts
+    int n;         // Number of pay parts to enter
+
+    cout << "How many pay components? ";
+    cin >> n;
+    cin.ignore();  // Ignore extra enter key
+
+    // Task 1: Ask user to type pay parts info and save them
+    for (int i = 0; i < n; ++i) {
+        PayComponent comp;  // Make one pay part
+        cout << "Enter description for component #" << (i + 1) << ": ";
+        cin.getline(comp.desc, 30);  // Read name of pay part
+        cout << "Enter amount for " << comp.desc << ": ";
+        cin >> comp.amount;          // Read money amount
+        cin.ignore();                // Ignore enter key
+        emp.addComponent(comp);      // Save pay part to worker
+    }
+
+    // Task 3: Ask user which pay way to use
+    cout << "\nChoose pay calculation method:\n";
+    cout << "1. Regular Pay\n";
+    cout << "2. Bonus Pay\n";
+    int choice;
+    cout << "Enter choice (1 or 2): ";
+    cin >> choice;
+
+    PayCalculator* calculator = NULL;  // Pointer to pay calculator
+    if (choice == 1) {
+        calculator = new RegularPayCalculator();  // Use regular pay way
+    } else if (choice == 2) {
+        calculator = new BonusPayCalculator();    // Use bonus pay way
+    } else {
+        cout << "Invalid choice. Exiting.\n";
+        return 1;  // Stop program if wrong choice
+    }
+
+    // Task 3: Calculate total pay and show it
+    float totalPay = calculator->compute(emp.getComponents(), emp.getCount());
+    cout << "\nTotal Pay: " << totalPay << endl;
+
+    delete calculator;  // Remove pay calculator
+
+    return 0;  // End program
+}
 
