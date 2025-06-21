@@ -1,0 +1,33 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+struct PayComponent {
+    char desc[30];
+    float amount;
+};
+
+int main() {
+    int n;
+    cout << "Enter number of pay components: ";
+    cin >> n;
+    cin.ignore();
+
+    PayComponent* comps = new PayComponent[n];
+
+    for (int i = 0; i < n; ++i) {
+        cout << "Enter description for component #" << (i + 1) << ": ";
+        cin.getline(comps[i].desc, 30);
+        cout << "Enter amount for " << comps[i].desc << ": ";
+        cin >> comps[i].amount;
+        cin.ignore();
+    }
+
+    cout << "\nEntered Pay Components:\n";
+    for (int i = 0; i < n; ++i) {
+        cout << comps[i].desc << ": " << comps[i].amount << endl;
+    }
+
+    delete[] comps;
+    return 0;
+}
