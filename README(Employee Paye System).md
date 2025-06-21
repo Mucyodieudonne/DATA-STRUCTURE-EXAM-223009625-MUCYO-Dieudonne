@@ -84,7 +84,7 @@ Add bonus: 1300 + 500 = 1800
 
 Output: Total Pay: 1800
 
-Conclusion
+By Conclusion,
 Uses object-oriented programming (inheritance, polymorphism, dynamic memory).
 
 Supports modular, flexible calculation.
